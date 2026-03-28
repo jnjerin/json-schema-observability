@@ -45,7 +45,7 @@ async function fetchTopicRepoCount(
       // Required by GitHub API — identifies our application
       'User-Agent': 'json-schema-observability-poc',
       // Request the specific API version we're building against
-      'X-GitHub-Api-Version': '2022-11-28',
+      'X-GitHub-Api-Version': '2026-03-10',
       Accept: 'application/vnd.github+json',
     },
   });
