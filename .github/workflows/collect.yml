@@ -1,0 +1,112 @@
+# .github/workflows/collect.yml
+#
+# Weekly Ecosystem Metrics Collection
+# =====================================
+# This workflow is the automation backbone of the observability pipeline.
+# It runs on a weekly schedule, collects ecosystem metrics from three
+# sources (npm, GitHub, org health), and commits the results back to
+# the repository.
+#
+# Design decisions:
+#
+# 1. SCHEDULE: Runs every Sunday at midnight UTC.
+#    Weekly cadence matches npm's download reporting window (they report
+#    by week). Daily would produce noisy data with minimal signal change.
+#    Monthly would miss important short-term trends.
+#
+# 2. MANUAL TRIGGER: workflow_dispatch allows running manually from the
+#    GitHub UI without waiting for Sunday. Essential for testing and for
+#    backfilling data after the pipeline is first deployed.
+#
+# 3. GITHUB_TOKEN: We use the built-in GITHUB_TOKEN secret rather than
+#    a personal access token. This is scoped to the repository and
+#    automatically rotated by GitHub — more secure than a PAT.
+#    It needs write permission to commit data files back to the repo.
+#
+# 4. COMMIT STRATEGY: We commit only if there is new data to commit.
+#    The "nothing to commit" check prevents empty commits cluttering
+#    the history when the workflow runs but produces no changes.
+
+name: Weekly Ecosystem Metrics Collection
+
+on:
+  # Run every Sunday at midnight UTC
+  # Cron syntax: minute hour day-of-month month day-of-week
+  schedule:
+    - cron: '0 0 * * 0'
+
+  # Allow manual triggering from the GitHub Actions UI
+  # This is critical for testing without waiting for Sunday
+  workflow_dispatch:
+
+# Grant the workflow permission to write back to the repository
+# This is needed to commit the collected data files
+permissions:
+  contents: write
+
+jobs:
+  collect:
+    name: Collect Ecosystem Metrics
+    
+    # Use Ubuntu — lightweight, fast, and what most Node.js projects target
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Check out the repository
+      # fetch-depth: 0 gets the full git history, which we need so our
+      # commit doesn't overwrite anything unexpectedly
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Step 2: Set up Node.js
+      # We pin to Node 20 (current LTS) for stability.
+      # The cache: 'npm' line caches node_modules between runs,
+      # making subsequent workflow runs significantly faster.
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      # Step 3: Install dependencies
+      # Using --frozen-lockfile ensures we install exactly the versions
+      # in package-lock.json — no surprise upgrades in production
+      - name: Install dependencies
+        run: npm ci
+
+      # Step 4: Run the collection pipeline
+      # This is identical to running: npm run collect locally.
+      - name: Collect ecosystem metrics
+        run: npm run collect
+        env:
+          # GITHUB_TOKEN is automatically provided by GitHub Actions.
+          # It is scoped to this repository and expires when the job ends.
+          # It is mapped to the variable our collector expects.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Step 5: Commit and push the collected data
+      # We only commit if there are actual changes — if the API returned
+      # identical data to the previous run, we skip the commit entirely.
+      # This keeps the git history clean and meaningful.
+      - name: Commit and push collected data
+        run: |
+          # Configure git identity for the automated commit
+          # These show up as the commit author in the git log
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Stage all changes in the data directory
+          git add data/
+
+          # Check if there is anything to commit
+          # 'git diff --staged --quiet' exits with code 1 if there are
+          # staged changes, code 0 if there are none.
+          # We use this to decide whether to proceed with the commit.
+          if git diff --staged --quiet; then
+            echo "No new data to commit — skipping commit step"
+          else
+            git commit -m "chore(data): weekly metrics collection $(date -u '+%Y-%m-%d')"
+            git push
+          fi
