@@ -1,9 +1,9 @@
 {
-  "runId": "2d0f7cde-0588-4d45-a427-1f7ed084e8c0",
-  "collectedAt": "2026-03-30T12:28:01.844Z",
+  "runId": "06d90d9a-9116-4763-afb6-d7a36543b91c",
+  "collectedAt": "2026-03-30T14:05:31.550Z",
   "npm": {
-    "collectedAt": "2026-03-30T12:27:59.020Z",
-    "collectedAtUnix": 1774873679020,
+    "collectedAt": "2026-03-30T14:05:30.577Z",
+    "collectedAtUnix": 1774879530577,
     "packages": [
       {
         "package": "ajv",
@@ -32,19 +32,19 @@
     ]
   },
   "github": {
-    "collectedAt": "2026-03-30T12:27:59.295Z",
-    "collectedAtUnix": 1774873679295,
+    "collectedAt": "2026-03-30T14:05:30.630Z",
+    "collectedAtUnix": 1774879530630,
     "repos": [
       {
         "topic": "json-schema",
-        "totalCount": 2514,
+        "totalCount": 2516,
         "isApproximate": false
       }
     ]
   },
   "orgHealth": {
-    "collectedAt": "2026-03-30T12:27:59.300Z",
-    "collectedAtUnix": 1774873679300,
+    "collectedAt": "2026-03-30T14:05:30.632Z",
+    "collectedAtUnix": 1774879530632,
     "organization": "json-schema-org",
     "repositories": [
       {
@@ -52,10 +52,10 @@
         "repo": "json-schema-spec",
         "fullName": "json-schema-org/json-schema-spec",
         "description": "The JSON Schema specification",
-        "stars": 4914,
+        "stars": 4915,
         "forks": 416,
         "openIssues": 65,
-        "watchers": 4914,
+        "watchers": 4915,
         "isArchived": false,
         "defaultBranch": "main",
         "lastPushedAt": "2026-03-25T22:03:48Z"
