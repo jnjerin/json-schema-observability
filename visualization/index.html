@@ -51,6 +51,43 @@
       line-height: 1.5;
     }
 
+    .header .subtitle {
+      margin-top: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.85rem;
+    }
+
+    .header .subtitle .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: #238636;
+      color: #aaffc9;
+      padding: 0.35rem 0.75rem;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.8rem;
+      letter-spacing: 0.03em;
+    }
+
+    .header .subtitle .badge::before {
+      content: '●';
+      font-size: 0.6rem;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .header .subtitle .meta-text {
+      color: #8b949e;
+      font-size: 0.85rem;
+    }
+
     .header .meta {
       margin-top: 0.8rem;
       font-size: 0.8rem;
@@ -170,6 +207,10 @@
         JSON Schema ecosystem — npm adoption, GitHub activity, and
         organization repository health.
       </p>
+      <div class="subtitle">
+        <span class="badge">Live dashboard</span>
+        <span class="meta-text">auto-updated weekly via GitHub Actions</span>
+      </div>
       <div class="meta" id="meta">Loading data...</div>
     </div>
 
