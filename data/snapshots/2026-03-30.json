@@ -1,9 +1,9 @@
 {
-  "runId": "06d90d9a-9116-4763-afb6-d7a36543b91c",
-  "collectedAt": "2026-03-30T14:05:31.550Z",
+  "runId": "772d2781-8dc5-4ed9-8ceb-9af7e64f2737",
+  "collectedAt": "2026-03-30T14:15:02.357Z",
   "npm": {
-    "collectedAt": "2026-03-30T14:05:30.577Z",
-    "collectedAtUnix": 1774879530577,
+    "collectedAt": "2026-03-30T14:15:01.229Z",
+    "collectedAtUnix": 1774880101229,
     "packages": [
       {
         "package": "ajv",
@@ -32,8 +32,8 @@
     ]
   },
   "github": {
-    "collectedAt": "2026-03-30T14:05:30.630Z",
-    "collectedAtUnix": 1774879530630,
+    "collectedAt": "2026-03-30T14:15:01.263Z",
+    "collectedAtUnix": 1774880101263,
     "repos": [
       {
         "topic": "json-schema",
@@ -43,8 +43,8 @@
     ]
   },
   "orgHealth": {
-    "collectedAt": "2026-03-30T14:05:30.632Z",
-    "collectedAtUnix": 1774879530632,
+    "collectedAt": "2026-03-30T14:15:01.265Z",
+    "collectedAtUnix": 1774880101265,
     "organization": "json-schema-org",
     "repositories": [
       {
