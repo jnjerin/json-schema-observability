@@ -13,11 +13,12 @@
  * For a weekly cron job, predictability beats speed.
  */
 
+
 import { config } from 'dotenv';
 import { randomUUID } from 'crypto';
 import { collectNpmMetrics } from './collectors/npm';
 import { collectGitHubMetrics } from './collectors/github';
-import { collectBowtieMetrics } from './collectors/bowtie';
+import { collectOrgHealthMetrics } from './collectors/orgHealth';
 import { saveSnapshot } from './storage/writer';
 import { EcosystemSnapshot } from './types';
 
@@ -63,13 +64,14 @@ async function main(): Promise<void> {
 
   // Step 3: Collect all metrics
   // Each collector handles its own errors and logs its own progress
-  const [npmMetrics, githubMetrics, bowtieMetrics] = await Promise.allSettled([
+  const [npmMetrics, githubMetrics, orgHealthMetrics] = await Promise.allSettled([
     collectNpmMetrics(),
     collectGitHubMetrics(githubToken),
-    collectBowtieMetrics(),
+    collectOrgHealthMetrics(githubToken),
   ]);
 
   // Step 4: Unwrap results — handle any collector failures explicitly
+  // All three collectors are core — fail if any of them fail
   if (npmMetrics.status === 'rejected') {
     console.error('\n❌ npm collection failed:', npmMetrics.reason);
     process.exit(1); // npm data is core — fail the run if it's missing
@@ -80,13 +82,9 @@ async function main(): Promise<void> {
     process.exit(1); // GitHub data is core — fail the run if it's missing
   }
 
-  // Bowtie is optional — we continue even if it fails
-  const bowtieData = bowtieMetrics.status === 'fulfilled'
-    ? bowtieMetrics.value
-    : null;
-
-  if (bowtieMetrics.status === 'rejected') {
-    console.warn('\n⚠️  Bowtie collection failed — continuing without it');
+  if (orgHealthMetrics.status === 'rejected') {
+    console.error('\n❌ Org health collection failed:', orgHealthMetrics.reason);
+    process.exit(1);
   }
 
   // Step 5: Assemble the complete snapshot
@@ -95,20 +93,20 @@ async function main(): Promise<void> {
     collectedAt: new Date().toISOString(),
     npm: npmMetrics.value,
     github: githubMetrics.value,
-    bowtie: bowtieData,
+    orgHealth: orgHealthMetrics.value,
   };
 
   // Step 6: Save everything
   saveSnapshot(snapshot);
 
   // Step 7: Print summary
+  const specRepo = orgHealthMetrics.value.repositories.find(r => r.repo === 'json-schema-spec');
   console.log('\n✅ Collection complete!');
   console.log('─────────────────────────────────────');
-  console.log(`AJV weekly downloads: ${npmMetrics.value.packages.find(p => p.package === 'ajv')?.downloads.toLocaleString()}`);
-  console.log(`GitHub repos (json-schema): ${githubMetrics.value.repos[0]?.totalCount.toLocaleString()}`);
-  if (bowtieData) {
-    console.log(`Top Bowtie compliance: ${bowtieData.implementations[0]?.name} at ${bowtieData.implementations[0]?.complianceRate}%`);
-  }
+  console.log(`AJV weekly downloads:        ${npmMetrics.value.packages.find(p => p.package === 'ajv')?.downloads.toLocaleString()}`);
+  console.log(`GitHub repos (json-schema):  ${githubMetrics.value.repos[0]?.totalCount.toLocaleString()}`);
+  console.log(`json-schema-spec stars:      ${specRepo?.stars.toLocaleString()}`);
+  console.log(`json-schema-spec open issues: ${specRepo?.openIssues}`);
   console.log('─────────────────────────────────────');
 }
 

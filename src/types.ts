@@ -59,32 +59,43 @@ export interface TimestampedRecord {
   export interface GitHubSnapshot extends TimestampedRecord {
     repos: GitHubRepoMetrics[];
   }
-  
-  // ─── Bowtie Compliance ────────────────────────────────────────────────────────
-  
+
+  // ─── GitHub Org Repository Health ─────────────────────────────────────────────
+
   /**
-   * Compliance score for a single JSON Schema implementation.
-   * Source: Bowtie (https://bowtie.report)
+   * Health metrics for a single GitHub repository.
    * 
-   * Bowtie runs the official JSON Schema test suite against all known
-   * implementations and publishes results. This tells us how "correct"
-   * each implementation is.
+   * These metrics are chosen because they signal different things:
+   * - stars: community interest and discovery
+   * - forks: active usage and contribution intent  
+   * - openIssues: workload and community engagement
+   * - watchers: people actively following development
+   * - subscribers: people who want notifications (different from watchers)
+   * 
+   * Tracking these longitudinally tells us whether a repo is growing,
+   * plateauing, or declining — which is exactly what the observability
+   * project is designed to surface.
    */
-  export interface BowtiImplementationScore {
-    name: string;           // implementation name, e.g. "ajv"
-    language: string;       // programming language
-    draft: string;          // JSON Schema draft, e.g. "2020-12"
-    passedTests: number;    // number of tests passed
-    totalTests: number;     // total tests run
-    complianceRate: number; // passedTests / totalTests as a percentage (0-100)
+  export interface RepoHealthMetrics {
+    owner: string;           // e.g. "json-schema-org"
+    repo: string;            // e.g. "json-schema-spec"
+    fullName: string;        // e.g. "json-schema-org/json-schema-spec"
+    description: string;     // repo description from GitHub
+    stars: number;           // stargazer count
+    forks: number;           // fork count
+    openIssues: number;      // open issues + open PRs (GitHub combines these)
+    watchers: number;        // watcher count
+    isArchived: boolean;     // archived repos need flagging — declining signal
+    defaultBranch: string;   // useful metadata
+    lastPushedAt: string;    // ISO timestamp of last push — activity signal
   }
-  
+
   /**
-   * The full Bowtie snapshot for one run.
+   * The full org health snapshot for one collection run.
    */
-  export interface BowtieSnapshot extends TimestampedRecord {
-    implementations: BowtiImplementationScore[];
-    draft: string;          // which draft these results are for
+  export interface OrgHealthSnapshot extends TimestampedRecord {
+    organization: string;
+    repositories: RepoHealthMetrics[];
   }
   
   // ─── Combined Snapshot ────────────────────────────────────────────────────────
@@ -99,7 +110,7 @@ export interface TimestampedRecord {
     collectedAt: string;     // ISO timestamp
     npm: NpmSnapshot;
     github: GitHubSnapshot;
-    bowtie: BowtieSnapshot | null; // nullable — Bowtie may be temporarily unavailable
+    orgHealth: OrgHealthSnapshot;
   }
   
   // ─── History ──────────────────────────────────────────────────────────────────
@@ -117,7 +128,7 @@ export interface TimestampedRecord {
     collectedAt: string;
     ajvWeeklyDownloads: number;
     jsonSchemaRepoCount: number;
-    bowtieTopCompliance: number | null;
+    jsonSchemaSpecStars: number;
   }
   
   export interface HistoryFile {

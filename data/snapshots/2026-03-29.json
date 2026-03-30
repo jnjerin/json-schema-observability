@@ -1,0 +1,46 @@
+{
+  "runId": "6bddd149-2f1e-4817-988f-19f4a211c0e4",
+  "collectedAt": "2026-03-29T21:07:20.573Z",
+  "npm": {
+    "collectedAt": "2026-03-29T21:07:18.445Z",
+    "collectedAtUnix": 1774818438445,
+    "packages": [
+      {
+        "package": "ajv",
+        "downloads": 272281769,
+        "start": "2026-03-22",
+        "end": "2026-03-28"
+      },
+      {
+        "package": "jsonschema",
+        "downloads": 5836165,
+        "start": "2026-03-22",
+        "end": "2026-03-28"
+      },
+      {
+        "package": "@hyperjump/json-schema",
+        "downloads": 163942,
+        "start": "2026-03-22",
+        "end": "2026-03-28"
+      },
+      {
+        "package": "ajv-formats",
+        "downloads": 77471208,
+        "start": "2026-03-22",
+        "end": "2026-03-28"
+      }
+    ]
+  },
+  "github": {
+    "collectedAt": "2026-03-29T21:07:18.639Z",
+    "collectedAtUnix": 1774818438639,
+    "repos": [
+      {
+        "topic": "json-schema",
+        "totalCount": 2511,
+        "isApproximate": false
+      }
+    ]
+  },
+  "bowtie": null
+}

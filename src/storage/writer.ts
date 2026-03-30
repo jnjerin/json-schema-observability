@@ -82,14 +82,18 @@ function appendToHistory(snapshot: EcosystemSnapshot): void {
   // Extract the key summary metrics for the history log
   const ajvData = snapshot.npm.packages.find(p => p.package === 'ajv');
   const githubData = snapshot.github.repos.find(r => r.topic === 'json-schema');
-  const topBowtie = snapshot.bowtie?.implementations[0];
+  
+  // Track stars on the spec repo as a longitudinal interest signal
+  const specRepo = snapshot.orgHealth.repositories.find(
+    r => r.repo === 'json-schema-spec'
+  );
 
   const entry: HistoryEntry = {
     runId: snapshot.runId,
     collectedAt: snapshot.collectedAt,
     ajvWeeklyDownloads: ajvData?.downloads ?? 0,
     jsonSchemaRepoCount: githubData?.totalCount ?? 0,
-    bowtieTopCompliance: topBowtie?.complianceRate ?? null,
+    jsonSchemaSpecStars: specRepo?.stars ?? 0,
   };
 
   history.entries.push(entry);
