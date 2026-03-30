@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JSON Schema Ecosystem Observability</title>
+
+  <!-- Chart.js from CDN — only external dependency -->
+  <!-- Using a pinned version for reproducibility -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+
+  <style>
+    /* ── Reset & Base ────────────────────────────────────────────────── */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #0d1117;  /* GitHub dark background */
+      color: #e6edf3;
+      min-height: 100vh;
+      padding: 2rem 1rem;
+    }
+
+    /* ── Layout ──────────────────────────────────────────────────────── */
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    /* ── Header ──────────────────────────────────────────────────────── */
+    .header {
+      margin-bottom: 2.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid #30363d;
+    }
+
+    .header h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #f0f6fc;
+      margin-bottom: 0.4rem;
+    }
+
+    .header p {
+      font-size: 0.9rem;
+      color: #8b949e;
+      line-height: 1.5;
+    }
+
+    .header .meta {
+      margin-top: 0.8rem;
+      font-size: 0.8rem;
+      color: #6e7681;
+    }
+
+    /* ── Summary Cards ───────────────────────────────────────────────── */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .card {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 1.2rem 1.4rem;
+    }
+
+    .card .label {
+      font-size: 0.75rem;
+      color: #8b949e;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.4rem;
+    }
+
+    .card .value {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #f0f6fc;
+      line-height: 1.2;
+    }
+
+    .card .sublabel {
+      font-size: 0.75rem;
+      color: #6e7681;
+      margin-top: 0.3rem;
+    }
+
+    /* ── Charts ──────────────────────────────────────────────────────── */
+    .charts {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .chart-card {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 1.4rem;
+    }
+
+    .chart-card h2 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #f0f6fc;
+      margin-bottom: 0.3rem;
+    }
+
+    .chart-card .chart-description {
+      font-size: 0.8rem;
+      color: #8b949e;
+      margin-bottom: 1.2rem;
+      line-height: 1.4;
+    }
+
+    .chart-wrapper {
+      position: relative;
+      height: 220px;
+    }
+
+    /* ── Loading & Error States ──────────────────────────────────────── */
+    .state {
+      text-align: center;
+      padding: 3rem;
+      color: #8b949e;
+      font-size: 0.9rem;
+    }
+
+    .state.error {
+      color: #f85149;
+    }
+
+    /* ── Footer ──────────────────────────────────────────────────────── */
+    .footer {
+      margin-top: 2.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid #30363d;
+      font-size: 0.8rem;
+      color: #6e7681;
+      text-align: center;
+    }
+
+    .footer a {
+      color: #58a6ff;
+      text-decoration: none;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+
+    <!-- Header -->
+    <div class="header">
+      <h1>JSON Schema Ecosystem Observability</h1>
+      <p>
+        Automated weekly metrics tracking the health and growth of the
+        JSON Schema ecosystem — npm adoption, GitHub activity, and
+        organization repository health.
+      </p>
+      <div class="meta" id="meta">Loading data...</div>
+    </div>
+
+    <!-- Summary Cards — populated by JS -->
+    <div class="cards" id="cards">
+      <div class="card">
+        <div class="label">AJV Weekly Downloads</div>
+        <div class="value" id="card-ajv">—</div>
+        <div class="sublabel">Last 7 days</div>
+      </div>
+      <div class="card">
+        <div class="label">GitHub Repos</div>
+        <div class="value" id="card-repos">—</div>
+        <div class="sublabel">Tagged json-schema</div>
+      </div>
+      <div class="card">
+        <div class="label">json-schema-spec Stars</div>
+        <div class="value" id="card-stars">—</div>
+        <div class="sublabel">GitHub stargazers</div>
+      </div>
+      <div class="card">
+        <div class="label">Data Runs</div>
+        <div class="value" id="card-runs">—</div>
+        <div class="sublabel">Total collections</div>
+      </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="charts" id="charts">
+      <!-- Chart 1: AJV Downloads -->
+      <div class="chart-card">
+        <h2>AJV Weekly Downloads</h2>
+        <p class="chart-description">
+          Weekly download count for AJV — the most widely used JSON Schema
+          validator. This is the strongest adoption signal in the ecosystem.
+          Sustained growth indicates increasing developer reliance on JSON Schema.
+        </p>
+        <div class="chart-wrapper">
+          <canvas id="chart-downloads"></canvas>
+        </div>
+      </div>
+
+      <!-- Chart 2: GitHub Repo Count -->
+      <div class="chart-card">
+        <h2>GitHub Repositories Using JSON Schema</h2>
+        <p class="chart-description">
+          Total public repositories tagged with the <code>json-schema</code>
+          GitHub topic. Growth here indicates the ecosystem is expanding beyond
+          just validator adoption — more projects are explicitly identifying
+          themselves as JSON Schema users.
+        </p>
+        <div class="chart-wrapper">
+          <canvas id="chart-repos"></canvas>
+        </div>
+      </div>
+
+      <!-- Chart 3: Spec Stars -->
+      <div class="chart-card">
+        <h2>json-schema-spec GitHub Stars</h2>
+        <p class="chart-description">
+          Stargazer count for the JSON Schema specification repository.
+          Stars are a lagging indicator of awareness and interest — slower
+          moving than downloads but more durable as a signal of community trust.
+        </p>
+        <div class="chart-wrapper">
+          <canvas id="chart-stars"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      Data collected automatically every Sunday via GitHub Actions.
+      Source: <a href="../data/history.json">data/history.json</a> ·
+      <a href="https://github.com/jnjerin/json-schema-observability">GitHub</a>
+    </div>
+
+  </div><!-- /container -->
+
+  <script>
+    /**
+     * Visualization script
+     *
+     * Design decisions:
+     *
+     * 1. We fetch history.json at runtime rather than embedding data
+     *    directly in the HTML. This means the visualization automatically
+     *    reflects new data without any rebuild step — open the file and
+     *    you see the latest metrics.
+     *
+     * 2. We use Chart.js from a CDN rather than bundling it. This keeps
+     *    the file self-contained and eliminates a build pipeline for what
+     *    is fundamentally a display layer.
+     *
+     * 3. We handle the case where history.json has only one entry
+     *    gracefully — charts still render, just with a single point.
+     *    This is important for the POC phase where we have minimal data.
+     *
+     * 4. Colors match GitHub's dark theme deliberately — this project
+     *    lives on GitHub and should feel at home there.
+     */
+
+    // ── Chart.js global defaults ────────────────────────────────────────
+    Chart.defaults.color = '#8b949e';
+    Chart.defaults.borderColor = '#30363d';
+    Chart.defaults.font.family = "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+    Chart.defaults.font.size = 12;
+
+    // ── Shared chart configuration ──────────────────────────────────────
+    // Extracted so all three charts have consistent appearance
+    function buildChartConfig(labels, data, label, color, formatFn) {
+      return {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [{
+            label,
+            data,
+            borderColor: color,
+            backgroundColor: color + '18', // 18 = ~10% opacity in hex
+            borderWidth: 2,
+            pointRadius: 5,
+            pointHoverRadius: 7,
+            pointBackgroundColor: color,
+            tension: 0.3,  // slight curve — easier to read than sharp lines
+            fill: true,
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: {
+            // Show tooltip for nearest point on hover
+            mode: 'index',
+            intersect: false,
+          },
+          plugins: {
+            legend: {
+              display: false, // title in the card header is enough
+            },
+            tooltip: {
+              backgroundColor: '#1c2128',
+              borderColor: '#30363d',
+              borderWidth: 1,
+              padding: 10,
+              callbacks: {
+                // Format the tooltip value using the provided formatter
+                label: (ctx) => ` ${label}: ${formatFn(ctx.parsed.y)}`
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: { color: '#21262d' },
+              ticks: { maxTicksLimit: 8 }
+            },
+            y: {
+              grid: { color: '#21262d' },
+              beginAtZero: false,
+              ticks: {
+                // Format y-axis labels using the provided formatter
+                callback: (val) => formatFn(val)
+              }
+            }
+          }
+        }
+      };
+    }
+
+    // ── Number formatters ───────────────────────────────────────────────
+    // Make large numbers readable at a glance
+    const formatMillions = (n) => {
+      if (n >= 1_000_000) return (n / 1_000_000).toFixed(1) + 'M';
+      if (n >= 1_000) return (n / 1_000).toFixed(1) + 'K';
+      return n.toLocaleString();
+    };
+
+    const formatCount = (n) => n.toLocaleString();
+
+    // ── Populate summary cards ──────────────────────────────────────────
+    function populateCards(history) {
+      const latest = history.entries[history.entries.length - 1];
+
+      document.getElementById('card-ajv').textContent =
+        formatMillions(latest.ajvWeeklyDownloads);
+
+      document.getElementById('card-repos').textContent =
+        formatCount(latest.jsonSchemaRepoCount);
+
+      // jsonSchemaSpecStars may be null on first entry (before orgHealth)
+      document.getElementById('card-stars').textContent =
+        latest.jsonSchemaSpecStars
+          ? formatCount(latest.jsonSchemaSpecStars)
+          : '—';
+
+      document.getElementById('card-runs').textContent =
+        history.totalRuns;
+
+      // Update meta line
+      const lastRun = new Date(history.lastUpdated).toLocaleDateString(
+        'en-US', { year: 'numeric', month: 'long', day: 'numeric' }
+      );
+      document.getElementById('meta').textContent =
+        `Last updated: ${lastRun} · ${history.totalRuns} collection run${history.totalRuns === 1 ? '' : 's'}`;
+    }
+
+    // ── Render all three charts ─────────────────────────────────────────
+    function renderCharts(history) {
+      const entries = history.entries;
+
+      // Format dates for x-axis labels
+      const labels = entries.map(e =>
+        new Date(e.collectedAt).toLocaleDateString('en-US', {
+          month: 'short', day: 'numeric'
+        })
+      );
+
+      // Chart 1: AJV Downloads
+      new Chart(
+        document.getElementById('chart-downloads'),
+        buildChartConfig(
+          labels,
+          entries.map(e => e.ajvWeeklyDownloads),
+          'Weekly Downloads',
+          '#58a6ff',  // GitHub blue
+          formatMillions
+        )
+      );
+
+      // Chart 2: GitHub Repo Count
+      new Chart(
+        document.getElementById('chart-repos'),
+        buildChartConfig(
+          labels,
+          entries.map(e => e.jsonSchemaRepoCount),
+          'Repositories',
+          '#3fb950',  // GitHub green
+          formatCount
+        )
+      );
+
+      // Chart 3: Spec Stars
+      // Filter out entries where stars weren't collected yet (first run)
+      const starEntries = entries.filter(e => e.jsonSchemaSpecStars != null);
+      const starLabels = starEntries.map(e =>
+        new Date(e.collectedAt).toLocaleDateString('en-US', {
+          month: 'short', day: 'numeric'
+        })
+      );
+
+      new Chart(
+        document.getElementById('chart-stars'),
+        buildChartConfig(
+          starLabels,
+          starEntries.map(e => e.jsonSchemaSpecStars),
+          'Stars',
+          '#e3b341',  // GitHub yellow
+          formatCount
+        )
+      );
+    }
+
+    // ── Main: fetch history.json and render everything ──────────────────
+    async function init() {
+      try {
+        // Path is relative — works whether opened locally or via GitHub Pages
+        const response = await fetch('../data/history.json');
+
+        if (!response.ok) {
+          throw new Error(`Could not load history.json: ${response.status}`);
+        }
+
+        const history = await response.json();
+
+        if (!history.entries || history.entries.length === 0) {
+          throw new Error('No data entries found in history.json');
+        }
+
+        populateCards(history);
+        renderCharts(history);
+
+      } catch (err) {
+        // Show a useful error rather than a blank page
+        document.getElementById('meta').textContent = '';
+        document.getElementById('charts').innerHTML =
+          `<div class="state error">
+            ⚠️ Could not load data: ${err.message}<br><br>
+            <small>
+              Make sure history.json exists at data/history.json<br>
+              and that you're serving this file, not opening it directly<br>
+              (use: npx serve . or python -m http.server)
+            </small>
+          </div>`;
+        document.getElementById('cards').style.display = 'none';
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>
