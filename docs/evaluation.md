@@ -56,6 +56,7 @@ consequence of the following bugs:
 The async main function is called without `await`. Node.js fires the
 async function, the unhandled promise rejects silently, and the process
 exits with code 0 — appearing successful while doing nothing.
+(Reference from [`projects/initial-data/main.js`](https://github.com/json-schema-org/ecosystem/blob/main/projects/initial-data/main.js#L181))
 
 **Bug 2 — Exception swallowing (main.js line 169)**
 Errors inside the main processing loop are caught and logged but
@@ -148,7 +149,7 @@ rendered website.
 The correct integration path is via Bowtie's official GitHub Action,
 which runs natively in CI and outputs structured JSON locally. I have
 documented this as a planned enhancement. The original attempted
-collector is preserved in `src/collectors/bowtie.ts` with full
+collector is preserved in [`src/collectors/bowtie.ts`](../src/collectors/bowtie.ts) with full
 commentary on what was tried, what failed, and the correct architectural
 approach.
 

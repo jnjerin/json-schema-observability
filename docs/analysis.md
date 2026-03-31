@@ -26,7 +26,7 @@ monitoring for growth signals.
 
 **How I would automate this to run weekly**
 
-The GitHub Actions workflow at `.github/workflows/collect.yml` already
+The GitHub Actions workflow at [`.github/workflows/collect.yml`](../.github/workflows/collect.yml) already
 implements this. It triggers every Sunday at midnight UTC via a cron
 schedule (`0 0 * * 0`), runs `npm run collect`, and commits the results
 back to the repository. The npm API requires no authentication and has
@@ -130,8 +130,8 @@ Bowtie compliance scores were planned as a fourth metric. After
 investigation, Bowtie has no public REST API. The investigation process,
 findings, and the correct architectural path forward are documented in:
 
-- `src/collectors/bowtie.ts` — preserved investigation artifact
-- `docs/decisions.md` — Decision 8
+- [`src/collectors/bowtie.ts`](../src/collectors/bowtie.ts) — preserved investigation artifact
+- [`docs/decisions.md`](./decisions.md) — Decision 8
 
 ---
 

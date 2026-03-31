@@ -207,7 +207,7 @@ project vision.
 
 ## Key Design Decisions
 
-Full reasoning for every decision is in [`docs/decisions.md`](docs/decisions.md).
+Full reasoning for every decision is in [`docs/decisions.md`](./docs/decisions.md).
 Short version:
 
 - **TypeScript** over JavaScript — three of the existing code's bugs
@@ -220,7 +220,7 @@ Short version:
 - **`GITHUB_TOKEN`** over PAT — scoped to repo, auto-rotated,
   more secure for automated workflows
 - **Org health over Bowtie** — Bowtie has no public REST API;
-  investigation documented in `src/collectors/bowtie.ts`
+   investigation documented in [`src/collectors/bowtie.ts`](./src/collectors/bowtie.ts)
 
 ---
 
@@ -230,8 +230,8 @@ Bowtie was planned as a third metric source. After investigation,
 Bowtie has no public REST API — it is a CLI tool that runs
 implementations inside Docker containers. The correct integration
 path is via Bowtie's official GitHub Action. This is documented
-as a planned enhancement. See `src/collectors/bowtie.ts` for
-the full investigation trail and `docs/decisions.md` (Decision 8)
+as a planned enhancement. See [`src/collectors/bowtie.ts`](./src/collectors/bowtie.ts) for
+the full investigation trail and [`docs/decisions.md`](./docs/decisions.md) (Decision 8)
 for the architectural reasoning.
 
 ---
@@ -246,9 +246,9 @@ All implementation decisions, code, and documentation are my own. I verified sug
 
 ## Documentation
 
-- [`docs/evaluation.md`](docs/evaluation.md) — Part 2: evaluation of
+- [`docs/evaluation.md`](./docs/evaluation.md) — Part 2: evaluation of
   the existing `projects/initial-data/` proof-of-concept
-- [`docs/decisions.md`](docs/decisions.md) — Architectural decisions
+- [`docs/decisions.md`](./docs/decisions.md) — Architectural decisions
   and tradeoffs made during development
-- [`docs/analysis.md`](docs/analysis.md) — Part 1 written answers:
+- [`docs/analysis.md`](./docs/analysis.md) — Part 1 written answers:
   what each metric means, automation approach, challenges faced

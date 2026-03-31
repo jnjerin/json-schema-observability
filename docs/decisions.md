@@ -45,8 +45,8 @@ we are optimizing for correctness and extensibility.
 
 ## Decision 3: Two-layer storage architecture
 
-**Choice:** Full snapshots in `data/snapshots/YYYY-MM-DD.json` plus a
-lightweight history log in `data/history.json`.
+**Choice:** Full snapshots in [`data/snapshots/YYYY-MM-DD.json`](../data/snapshots) plus a
+lightweight history log in [`data/history.json`](../data/history.json).
 
 **Why:** These serve different purposes. The full snapshot contains every
 field from every collector — useful when you need to debug a specific
@@ -155,7 +155,7 @@ measure ecosystem breadth, org health measures the vitality of the
 organization itself.
 
 **Bowtie path forward:** The correct implementation is documented in
-`src/collectors/bowtie.ts` with full commentary. It is preserved as an
+[`src/collectors/bowtie.ts`](../src/collectors/bowtie.ts) with full commentary. It is preserved as an
 investigation artifact rather than deleted.
 
 ---
