@@ -1,0 +1,104 @@
+{
+  "runId": "a23613ad-2269-47b2-9ce0-c3d70e640708",
+  "collectedAt": "2026-08-16T01:42:09.647Z",
+  "npm": {
+    "collectedAt": "2026-08-16T01:42:08.367Z",
+    "collectedAtUnix": 1786844528367,
+    "packages": [
+      {
+        "package": "ajv",
+        "downloads": 365940707,
+        "start": "2026-08-03",
+        "end": "2026-08-09"
+      },
+      {
+        "package": "jsonschema",
+        "downloads": 6287340,
+        "start": "2026-08-03",
+        "end": "2026-08-09"
+      },
+      {
+        "package": "@hyperjump/json-schema",
+        "downloads": 327656,
+        "start": "2026-08-03",
+        "end": "2026-08-09"
+      },
+      {
+        "package": "ajv-formats",
+        "downloads": 120034106,
+        "start": "2026-08-03",
+        "end": "2026-08-09"
+      }
+    ]
+  },
+  "github": {
+    "collectedAt": "2026-08-16T01:42:08.431Z",
+    "collectedAtUnix": 1786844528431,
+    "repos": [
+      {
+        "topic": "json-schema",
+        "totalCount": 3724,
+        "isApproximate": false
+      }
+    ]
+  },
+  "orgHealth": {
+    "collectedAt": "2026-08-16T01:42:08.433Z",
+    "collectedAtUnix": 1786844528433,
+    "organization": "json-schema-org",
+    "repositories": [
+      {
+        "owner": "json-schema-org",
+        "repo": "json-schema-spec",
+        "fullName": "json-schema-org/json-schema-spec",
+        "description": "The JSON Schema specification",
+        "stars": 5113,
+        "forks": 453,
+        "openIssues": 66,
+        "watchers": 5113,
+        "isArchived": false,
+        "defaultBranch": "main",
+        "lastPushedAt": "2026-08-15T18:47:24Z"
+      },
+      {
+        "owner": "json-schema-org",
+        "repo": "website",
+        "fullName": "json-schema-org/website",
+        "description": "JSON Schema website",
+        "stars": 165,
+        "forks": 469,
+        "openIssues": 338,
+        "watchers": 165,
+        "isArchived": false,
+        "defaultBranch": "main",
+        "lastPushedAt": "2026-08-16T01:39:38Z"
+      },
+      {
+        "owner": "json-schema-org",
+        "repo": "community",
+        "fullName": "json-schema-org/community",
+        "description": "A space to discuss community and organisational related things",
+        "stars": 133,
+        "forks": 76,
+        "openIssues": 61,
+        "watchers": 133,
+        "isArchived": false,
+        "defaultBranch": "main",
+        "lastPushedAt": "2026-05-11T16:48:18Z"
+      },
+      {
+        "owner": "json-schema-org",
+        "repo": "JSON-Schema-Test-Suite",
+        "fullName": "json-schema-org/JSON-Schema-Test-Suite",
+        "description": "A language agnostic test suite for the JSON Schema specifications",
+        "stars": 741,
+        "forks": 298,
+        "openIssues": 103,
+        "watchers": 741,
+        "isArchived": false,
+        "defaultBranch": "main",
+        "lastPushedAt": "2026-08-13T03:16:10Z"
+      }
+    ]
+  }
+}
