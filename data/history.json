@@ -1,6 +1,6 @@
 {
-  "lastUpdated": "2026-10-25T04:08:09.339Z",
-  "totalRuns": 34,
+  "lastUpdated": "2026-11-01T05:28:41.876Z",
+  "totalRuns": 35,
   "entries": [
     {
       "runId": "6bddd149-2f1e-4817-988f-19f4a211c0e4",
@@ -239,6 +239,13 @@
       "ajvWeeklyDownloads": 249308485,
       "jsonSchemaRepoCount": 4778,
       "jsonSchemaSpecStars": 5194
+    },
+    {
+      "runId": "93bc7102-6362-4a2a-a0f9-946b6e28ac19",
+      "collectedAt": "2026-11-01T05:28:41.876Z",
+      "ajvWeeklyDownloads": 515092679,
+      "jsonSchemaRepoCount": 4920,
+      "jsonSchemaSpecStars": 5203
     }
   ]
 }
